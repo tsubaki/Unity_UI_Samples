@@ -13,7 +13,7 @@ public class InfiniteScroll : UIBehaviour
 	[SerializeField, Range(0, 30)]
 	int m_instantateItemCount = 9;
 
-	[HideInInspector]
+	[System.NonSerialized]
 	public List<RectTransform>	m_itemList = new List<RectTransform> ();
 
 	public OnItemPositionChange onUpdateItem = new OnItemPositionChange ();
@@ -24,8 +24,8 @@ public class InfiniteScroll : UIBehaviour
 
 	public enum Direction
 	{
-		Virtical,
-		Holizonal,
+		Vertical,
+		Horizontal,
 	}
 
 	public Direction direction;
@@ -44,8 +44,8 @@ public class InfiniteScroll : UIBehaviour
 	private float AnchoredPosition
 	{
 		get{
-			return  (direction == Direction.Virtical ) ? 
-					_RectTransform.anchoredPosition.y:
+			return  (direction == Direction.Vertical ) ? 
+					-_RectTransform.anchoredPosition.y:
 					_RectTransform.anchoredPosition.x;
 		}
 	}
@@ -54,7 +54,7 @@ public class InfiniteScroll : UIBehaviour
 	public float ItemScale {
 		get {
 			if (m_ItemBase != null && m_itemScale == -1) {
-					m_itemScale = (direction == Direction.Virtical ) ? 
+					m_itemScale = (direction == Direction.Vertical ) ? 
 					m_ItemBase.sizeDelta.y : 
 					m_ItemBase.sizeDelta.x ;
 			}
@@ -71,6 +71,11 @@ public class InfiniteScroll : UIBehaviour
 
 		// create items
 
+		var scrollRect = GetComponentInParent<ScrollRect>();
+		scrollRect.horizontal = direction == Direction.Horizontal;
+		scrollRect.vertical = direction == Direction.Vertical;
+		scrollRect.content = _RectTransform;
+
 		m_ItemBase.gameObject.SetActive (false);
 		
 		for (int i=0; i<m_instantateItemCount; i++) {
@@ -78,9 +83,9 @@ public class InfiniteScroll : UIBehaviour
 			item.SetParent (transform, false);
 			item.name = i.ToString ();
 			item.anchoredPosition = 
-					(direction == Direction.Virtical ) ?
+					(direction == Direction.Vertical ) ?
 					new Vector2 (0, -ItemScale * (i)) : 
-					new Vector2 (-ItemScale * (i), 0) ;
+					new Vector2 (ItemScale * (i), 0) ;
 			m_itemList.Add (item);
 
 			item.gameObject.SetActive (true);
@@ -97,39 +102,40 @@ public class InfiniteScroll : UIBehaviour
 
 	void Update ()
 	{
-		var itemListLastCount = m_instantateItemCount - 1; 
 
-		while (AnchoredPosition - m_diffPreFramePosiiton  > ItemScale ) {
-			m_diffPreFramePosiiton += ItemScale;
+		while (AnchoredPosition - m_diffPreFramePosiiton  < -ItemScale * 2 ) {
+
+			m_diffPreFramePosiiton -= ItemScale;
 
 			var item = m_itemList [0];
 			m_itemList.RemoveAt (0);
 			m_itemList.Add (item);
 
-			item.anchoredPosition = 
-					(direction == Direction.Virtical ) ?
-					new Vector2 (0, (-ItemScale * (itemListLastCount)) - ItemScale * m_currentItemNo) : 
-					new Vector2 ((-ItemScale * (itemListLastCount)) - ItemScale * m_currentItemNo, 0);
-			onUpdateItem.Invoke (m_currentItemNo + itemListLastCount, item.gameObject);
+			var pos = ItemScale * m_instantateItemCount + ItemScale * m_currentItemNo;
+			item.anchoredPosition = (direction == Direction.Vertical ) ? new Vector2 (0, -pos) : new Vector2 (pos, 0);
+
+			onUpdateItem.Invoke (m_currentItemNo + m_instantateItemCount, item.gameObject);
 
 			m_currentItemNo ++;
+
 		}
 
-		while (AnchoredPosition- m_diffPreFramePosiiton  < ItemScale * 2) {
-			m_diffPreFramePosiiton -= ItemScale;
+		while (AnchoredPosition- m_diffPreFramePosiiton  > -ItemScale * 2) {
 
+			m_diffPreFramePosiiton += ItemScale;
+
+			var itemListLastCount = m_instantateItemCount - 1; 
 			var item = m_itemList [itemListLastCount];
 			m_itemList.RemoveAt (itemListLastCount);
 			m_itemList.Insert (0, item);
 
 			m_currentItemNo --;
 
-			item.anchoredPosition = 
-					(direction == Direction.Virtical ) ? 
-					new Vector2 (0, -ItemScale * m_currentItemNo):
-					new Vector2 (-ItemScale * m_currentItemNo, 0);
+			var pos = ItemScale * m_currentItemNo;
+			item.anchoredPosition = (direction == Direction.Vertical ) ? new Vector2 (0, -pos): new Vector2 (pos, 0);
 			onUpdateItem.Invoke (m_currentItemNo, item.gameObject);
 		}
+
 	}
 
 	public class OnItemPositionChange : UnityEngine.Events.UnityEvent<int, GameObject>{}
