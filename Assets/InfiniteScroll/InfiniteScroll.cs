@@ -18,9 +18,17 @@ public class InfiniteScroll : UIBehaviour
 
 	public OnItemPositionChange onUpdateItem = new OnItemPositionChange ();
 
-	protected float m_diffPreFramePosiitonY = 0;
+	protected float m_diffPreFramePosiiton = 0;
 
 	protected int m_currentItemNo = 0;
+
+	public enum Direction
+	{
+		Virtical,
+		Holizonal,
+	}
+
+	public Direction direction;
 
 	// cache component
 
@@ -33,13 +41,24 @@ public class InfiniteScroll : UIBehaviour
 		}
 	}
 
-	private float m_itemHeight = -1;
-	public float ItemHeight {
+	private float AnchoredPosition
+	{
+		get{
+			return  (direction == Direction.Virtical ) ? 
+					_RectTransform.anchoredPosition.y:
+					_RectTransform.anchoredPosition.x;
+		}
+	}
+
+	private float m_itemScale = -1;
+	public float ItemScale {
 		get {
-			if (m_ItemBase != null) {
-				m_itemHeight = m_ItemBase.sizeDelta.y;
+			if (m_ItemBase != null && m_itemScale == -1) {
+					m_itemScale = (direction == Direction.Virtical ) ? 
+					m_ItemBase.sizeDelta.y : 
+					m_ItemBase.sizeDelta.x ;
 			}
-			return m_itemHeight;
+			return m_itemScale;
 		}
 	}
 
@@ -58,7 +77,10 @@ public class InfiniteScroll : UIBehaviour
 			var item = GameObject.Instantiate (m_ItemBase) as RectTransform;
 			item.SetParent (transform, false);
 			item.name = i.ToString ();
-			item.anchoredPosition = new Vector2 (0, -ItemHeight * (i));
+			item.anchoredPosition = 
+					(direction == Direction.Virtical ) ?
+					new Vector2 (0, -ItemScale * (i)) : 
+					new Vector2 (-ItemScale * (i), 0) ;
 			m_itemList.Add (item);
 
 			item.gameObject.SetActive (true);
@@ -77,21 +99,24 @@ public class InfiniteScroll : UIBehaviour
 	{
 		var itemListLastCount = m_instantateItemCount - 1; 
 
-		while (_RectTransform.anchoredPosition.y - m_diffPreFramePosiitonY  > ItemHeight) {
-			m_diffPreFramePosiitonY += ItemHeight;
+		while (AnchoredPosition - m_diffPreFramePosiiton  > ItemScale ) {
+			m_diffPreFramePosiiton += ItemScale;
 
 			var item = m_itemList [0];
 			m_itemList.RemoveAt (0);
 			m_itemList.Add (item);
 
-			item.anchoredPosition = new Vector2 (0, (-ItemHeight * (itemListLastCount)) - ItemHeight * m_currentItemNo);
+			item.anchoredPosition = 
+					(direction == Direction.Virtical ) ?
+					new Vector2 (0, (-ItemScale * (itemListLastCount)) - ItemScale * m_currentItemNo) : 
+					new Vector2 ((-ItemScale * (itemListLastCount)) - ItemScale * m_currentItemNo, 0);
 			onUpdateItem.Invoke (m_currentItemNo + itemListLastCount, item.gameObject);
 
 			m_currentItemNo ++;
 		}
 
-		while (_RectTransform.anchoredPosition.y - m_diffPreFramePosiitonY  < ItemHeight * 2) {
-			m_diffPreFramePosiitonY -= ItemHeight;
+		while (AnchoredPosition- m_diffPreFramePosiiton  < ItemScale * 2) {
+			m_diffPreFramePosiiton -= ItemScale;
 
 			var item = m_itemList [itemListLastCount];
 			m_itemList.RemoveAt (itemListLastCount);
@@ -99,7 +124,10 @@ public class InfiniteScroll : UIBehaviour
 
 			m_currentItemNo --;
 
-			item.anchoredPosition = new Vector2 (0, -ItemHeight * m_currentItemNo);
+			item.anchoredPosition = 
+					(direction == Direction.Virtical ) ? 
+					new Vector2 (0, -ItemScale * m_currentItemNo):
+					new Vector2 (-ItemScale * m_currentItemNo, 0);
 			onUpdateItem.Invoke (m_currentItemNo, item.gameObject);
 		}
 	}

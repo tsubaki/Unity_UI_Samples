@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -17,7 +17,7 @@ public class ItemControllerLimited : UIBehaviour, IInfiniteScrollSetup {
 
 		var rectTransform = GetComponent<RectTransform> ();
 		var delta = rectTransform.sizeDelta;
-		delta.y = infiniteScroll.ItemHeight * max;
+		delta.y = infiniteScroll.ItemScale * max;
 		rectTransform.sizeDelta = delta;
 	}
 

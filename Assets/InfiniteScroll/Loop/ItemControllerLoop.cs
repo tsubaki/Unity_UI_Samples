@@ -10,7 +10,6 @@ public class ItemControllerLoop : UIBehaviour, IInfiniteScrollSetup
 
 	public void OnPostSetupItems ()
 	{
-		GetComponent<InfiniteScroll> ().onUpdateItem.AddListener (OnUpdateItem);
 		GetComponentInParent<ScrollRect> ().movementType = ScrollRect.MovementType.Unrestricted;
 		isSetuped = true;
 	}
