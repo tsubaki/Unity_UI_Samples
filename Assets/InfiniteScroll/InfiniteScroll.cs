@@ -13,10 +13,12 @@ public class InfiniteScroll : UIBehaviour
 	[SerializeField, Range(0, 30)]
 	int m_instantateItemCount = 9;
 
-	[System.NonSerialized]
-	public List<RectTransform>	m_itemList = new List<RectTransform> ();
+	public Direction direction;
 
 	public OnItemPositionChange onUpdateItem = new OnItemPositionChange ();
+
+	[System.NonSerialized]
+	public List<RectTransform>	m_itemList = new List<RectTransform> ();
 
 	protected float m_diffPreFramePosiiton = 0;
 
@@ -28,7 +30,7 @@ public class InfiniteScroll : UIBehaviour
 		Horizontal,
 	}
 
-	public Direction direction;
+
 
 	// cache component
 
