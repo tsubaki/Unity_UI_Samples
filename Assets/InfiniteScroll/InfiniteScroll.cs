@@ -138,5 +138,6 @@ public class InfiniteScroll : UIBehaviour
 
 	}
 
+	[System.Serializable]
 	public class OnItemPositionChange : UnityEngine.Events.UnityEvent<int, GameObject>{}
 }
