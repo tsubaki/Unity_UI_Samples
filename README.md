@@ -18,3 +18,12 @@ Unity_UI_Samples
 無限スクロール可能なスクロールビュー（ループ）
 
 ![img](https://raw.githubusercontent.com/wiki/tsubaki/Unity_UI_Samples/img/scroll6.gif)
+
+#Animator
+
+ボタンを押すとメニューが飛び出る奴
+
+![img](https://raw.githubusercontent.com/wiki/tsubaki/Unity_UI_Samples/img/active2.gif)
+
+AnimatorをinactiveにしてもAnimatorが環境を再現する
+![img](https://raw.githubusercontent.com/wiki/tsubaki/Unity_UI_Samples/img/activedeactive.gif)
