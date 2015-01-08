@@ -7,10 +7,17 @@ public class ActiveDeactiveObject : MonoBehaviour
 	GameObject
 		target;
 
-	public void UpdateRegister(bool isTrue)
+	public void UpdateRegister (bool isTrue)
 	{
-		if( !isTrue )
-			ResumeAnimator.RestoreAnimator(target);
-		target.SetActive(isTrue);
+		if (!isTrue)
+			ResumeAnimator.RestoreAnimator (target);
+		target.SetActive (isTrue);
+
+	}
+
+	[ContextMenu("Add Resume Animator")]
+	public void AddResumeAnimatorInChildren ()
+	{
+		ResumeAnimator.AddResumeAnimatorInChildren (target);
 	}
 }
