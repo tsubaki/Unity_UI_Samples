@@ -21,9 +21,10 @@ Unity_UI_Samples
 
 #Animator
 
-ボタンを押すとメニューが飛び出る奴
+ボタンを押すとメニューが飛び出る奴  
 
 ![img](https://raw.githubusercontent.com/wiki/tsubaki/Unity_UI_Samples/img/active2.gif)
 
 AnimatorをinactiveにしてもAnimatorが環境を再現する
+
 ![img](https://raw.githubusercontent.com/wiki/tsubaki/Unity_UI_Samples/img/activedeactive.gif)
