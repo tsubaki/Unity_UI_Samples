@@ -91,20 +91,21 @@ public class ResumeAnimator : MonoBehaviour
 	public void Reset ()
 	{
 		Animator animparam = GetComponent<Animator> ();
-		UnityEditorInternal.AnimatorController controller = animparam.runtimeAnimatorController as UnityEditorInternal.AnimatorController;
-		parameterInfos = new AnimatorParameterInfo[controller.parameterCount];
+		UnityEditor.Animations.AnimatorController controller = animparam.runtimeAnimatorController as UnityEditor.Animations.AnimatorController;
+		var parameterCount = controller.parameters.Length;
+		parameterInfos = new AnimatorParameterInfo[parameterCount];
 
-		for (int i=0; i<controller.parameterCount; i++) {
-			var param = controller.GetParameter (i);
-			parameterInfos [i].hashName = Animator.StringToHash (controller.GetParameter (i).name);
+		for (int i=0; i<parameterCount; i++) {
+			var param = controller.parameters[i];
+			parameterInfos [i].hashName = Animator.StringToHash (controller.parameters[i].name);
 
-			if (param.type == UnityEditorInternal.AnimatorControllerParameterType.Bool) {
+			if (param.type == AnimatorControllerParameterType.Bool) {
 				parameterInfos [i].type = ResumeAnimator.AnimatorParameterInfo.ParameterType.BOOL;
-			} else if (param.type == UnityEditorInternal.AnimatorControllerParameterType.Float) {
+			} else if (param.type == AnimatorControllerParameterType.Float) {
 				parameterInfos [i].type = ResumeAnimator.AnimatorParameterInfo.ParameterType.FLOAT;
-			} else if (param.type == UnityEditorInternal.AnimatorControllerParameterType.Int) {
+			} else if (param.type == AnimatorControllerParameterType.Int) {
 				parameterInfos [i].type = ResumeAnimator.AnimatorParameterInfo.ParameterType.INT;
-			} else if (param.type == UnityEditorInternal.AnimatorControllerParameterType.Trigger) {
+			} else if (param.type == AnimatorControllerParameterType.Trigger) {
 				parameterInfos [i].type = ResumeAnimator.AnimatorParameterInfo.ParameterType.TRIGGER;
 			}
 		}
