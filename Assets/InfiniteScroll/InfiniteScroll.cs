@@ -18,7 +18,7 @@ public class InfiniteScroll : UIBehaviour
 	public OnItemPositionChange onUpdateItem = new OnItemPositionChange ();
 
 	[System.NonSerialized]
-	public List<RectTransform>	m_itemList = new List<RectTransform> ();
+	public LinkedList<RectTransform>	m_itemList = new LinkedList<RectTransform> ();
 
 	protected float m_diffPreFramePosiiton = 0;
 
@@ -35,7 +35,7 @@ public class InfiniteScroll : UIBehaviour
 	// cache component
 
 	private RectTransform m_rectTransform;
-	protected RectTransform _RectTransform {
+	protected RectTransform rectTransform {
 		get {
 			if (m_rectTransform == null)
 				m_rectTransform = GetComponent<RectTransform> ();
@@ -47,8 +47,8 @@ public class InfiniteScroll : UIBehaviour
 	{
 		get{
 			return  (direction == Direction.Vertical ) ? 
-					-_RectTransform.anchoredPosition.y:
-					_RectTransform.anchoredPosition.x;
+					-rectTransform.anchoredPosition.y:
+					rectTransform.anchoredPosition.x;
 		}
 	}
 
@@ -76,7 +76,7 @@ public class InfiniteScroll : UIBehaviour
 		var scrollRect = GetComponentInParent<ScrollRect>();
 		scrollRect.horizontal = direction == Direction.Horizontal;
 		scrollRect.vertical = direction == Direction.Vertical;
-		scrollRect.content = _RectTransform;
+		scrollRect.content = rectTransform;
 
 		m_ItemBase.gameObject.SetActive (false);
 		
@@ -88,7 +88,7 @@ public class InfiniteScroll : UIBehaviour
 					(direction == Direction.Vertical ) ?
 					new Vector2 (0, -ItemScale * (i)) : 
 					new Vector2 (ItemScale * (i), 0) ;
-			m_itemList.Add (item);
+			m_itemList.AddLast (item);
 
 			item.gameObject.SetActive (true);
 
@@ -109,9 +109,9 @@ public class InfiniteScroll : UIBehaviour
 
 			m_diffPreFramePosiiton -= ItemScale;
 
-			var item = m_itemList [0];
-			m_itemList.RemoveAt (0);
-			m_itemList.Add (item);
+			var item = m_itemList.First.Value;
+			m_itemList.RemoveFirst();
+			m_itemList.AddLast(item);
 
 			var pos = ItemScale * m_instantateItemCount + ItemScale * m_currentItemNo;
 			item.anchoredPosition = (direction == Direction.Vertical ) ? new Vector2 (0, -pos) : new Vector2 (pos, 0);
@@ -126,10 +126,9 @@ public class InfiniteScroll : UIBehaviour
 
 			m_diffPreFramePosiiton += ItemScale;
 
-			var itemListLastCount = m_instantateItemCount - 1; 
-			var item = m_itemList [itemListLastCount];
-			m_itemList.RemoveAt (itemListLastCount);
-			m_itemList.Insert (0, item);
+			var item = m_itemList.Last.Value;
+			m_itemList.RemoveLast();
+			m_itemList.AddFirst(item);
 
 			m_currentItemNo --;
 
