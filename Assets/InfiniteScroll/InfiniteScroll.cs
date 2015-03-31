@@ -122,7 +122,7 @@ public class InfiniteScroll : UIBehaviour
 
 		}
 
-		while (AnchoredPosition- m_diffPreFramePosition  > ItemScale * 2) {
+		while (AnchoredPosition- m_diffPreFramePosition > 0 ) {
 
 			m_diffPreFramePosition += ItemScale;
 
