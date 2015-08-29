@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEditor;
-using UnityEditorInternal;
+using UnityEditor.Animations;
 using System.Collections.Generic;
 
 public class ContainClip : EditorWindow {
 	
 	private AnimatorController controller;
-	
+
 	string clipName;
 	
 	[MenuItem("Assets/CombineAnimationclip")]

@@ -9,8 +9,9 @@ public class Item : UIBehaviour
 	Text uiText;
 
 	[SerializeField]
-	//Image uiBackground;
-	Image uiBackground, uiIcon;
+	Image uiBackground;
+	[SerializeField]
+	Image uiIcon;
 
 	private readonly Color[] colors = new Color[]
 	{
