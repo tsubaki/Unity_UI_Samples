@@ -14,10 +14,11 @@ public class ActiveDeactiveObject : MonoBehaviour
 		target.SetActive (isTrue);
 
 	}
-
+#if UNITY_EDITOR
 	[ContextMenu("Add Resume Animator")]
 	public void AddResumeAnimatorInChildren ()
 	{
 		ResumeAnimator.AddResumeAnimatorInChildren (target);
 	}
+#endif
 }
