@@ -1,25 +1,23 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-[RequireComponent(typeof( InfiniteScroll))]
+[RequireComponent(typeof(InfiniteScroll))]
 public class ItemControllerLoop : UIBehaviour, IInfiniteScrollSetup
 {
 	private bool isSetuped = false;
 
-	public void OnPostSetupItems ()
+	public void OnPostSetupItems()
 	{
-		GetComponentInParent<ScrollRect> ().movementType = ScrollRect.MovementType.Unrestricted;
+		GetComponentInParent<ScrollRect>().movementType = ScrollRect.MovementType.Unrestricted;
 		isSetuped = true;
 	}
 
-	public void OnUpdateItem (int itemCount, GameObject obj)
+	public void OnUpdateItem(int itemCount, GameObject obj)
 	{
-		if( isSetuped == true ) 
-			return;
+		if(isSetuped == true) return;
 
-		var item = obj.GetComponentInChildren<Item> ();
-		item.UpdateItem (itemCount);
+		var item = obj.GetComponentInChildren<Item>();
+		item.UpdateItem(itemCount);
 	}
 }
