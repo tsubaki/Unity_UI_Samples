@@ -25,21 +25,21 @@ public class AnimatorParameter : ScriptableObject
 	[ContextMenu("Setup")]
 	void Setup()
 	{
-		var controller = animatorController as UnityEditorInternal.AnimatorController;
-		parameterInfos = new AnimatorParameterInfo[controller.parameterCount];
+		UnityEditor.Animations.AnimatorController controller = animatorController as UnityEditor.Animations.AnimatorController;
+		parameterInfos = new AnimatorParameterInfo[controller.parameters.Length];
 		UnityEditor.AssetDatabase.RenameAsset(UnityEditor.AssetDatabase.GetAssetPath(this), animatorController.name);
 		name = animatorController.name;
-		for (int i=0; i<controller.parameterCount; i++) {
-			var param = controller.GetParameter (i);
+		for (int i=0; i<controller.parameters.Length; i++) {
+			var param = controller.parameters[i];
 			parameterInfos [i].hashName = Animator.StringToHash (param.name);
 //			parameterInfos[i].name = param.name;
-			if (param.type == UnityEditorInternal.AnimatorControllerParameterType.Bool) {
+			if (param.type == AnimatorControllerParameterType.Bool) {
 				parameterInfos [i].type = AnimatorParameterInfo.ParameterType.BOOL;
-			} else if (param.type == UnityEditorInternal.AnimatorControllerParameterType.Float) {
+			} else if (param.type == AnimatorControllerParameterType.Float) {
 				parameterInfos [i].type = AnimatorParameterInfo.ParameterType.FLOAT;
-			} else if (param.type == UnityEditorInternal.AnimatorControllerParameterType.Int) {
+			} else if (param.type == AnimatorControllerParameterType.Int) {
 				parameterInfos [i].type = AnimatorParameterInfo.ParameterType.INT;
-			} else if (param.type == UnityEditorInternal.AnimatorControllerParameterType.Trigger) {
+			} else if (param.type == AnimatorControllerParameterType.Trigger) {
 				parameterInfos [i].type = AnimatorParameterInfo.ParameterType.TRIGGER;
 			}
 		}
