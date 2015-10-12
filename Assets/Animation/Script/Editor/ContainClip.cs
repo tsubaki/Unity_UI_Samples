@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 public class ContainClip : EditorWindow {
 	
-	private AnimatorController controller;
+	private UnityEditor.Animations.AnimatorController controller;
 	
 	string clipName;
 	
@@ -14,14 +14,14 @@ public class ContainClip : EditorWindow {
 	static void Create()
 	{
 		var window = ContainClip.GetWindow(typeof(ContainClip)) as ContainClip;
-		if( Selection.activeObject is AnimatorController )
-			window.controller = Selection.activeObject as AnimatorController;
+		if( Selection.activeObject is UnityEditor.Animations.AnimatorController )
+			window.controller = Selection.activeObject as UnityEditor.Animations.AnimatorController;
 	}
 	
 	void OnGUI()
 	{
 		EditorGUILayout.LabelField("target clip");
-		controller = EditorGUILayout.ObjectField(controller, typeof(AnimatorController), false) as AnimatorController;
+		controller = EditorGUILayout.ObjectField(controller, typeof(UnityEditor.Animations.AnimatorController), false) as UnityEditor.Animations.AnimatorController;
 		
 		if( controller == null )
 			return;
@@ -50,7 +50,7 @@ public class ContainClip : EditorWindow {
 		}else{
 			if( GUILayout.Button("create"))
 			{
-				AnimationClip animationClip = AnimatorController.AllocateAnimatorClip(clipName);
+				AnimationClip animationClip = UnityEditor.Animations.AnimatorController.AllocateAnimatorClip(clipName);
 				AssetDatabase.AddObjectToAsset(animationClip, controller);
 				AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(controller));
 				AssetDatabase.Refresh();
