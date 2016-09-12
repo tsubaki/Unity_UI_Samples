@@ -1,28 +1,27 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.UI;
-using System.Linq;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
+using System.Linq;
 
 public class InfiniteScroll : UIBehaviour
 {
 	[SerializeField]
-	private RectTransform m_ItemBase;
+	private RectTransform itemPrototype;
 
 	[SerializeField, Range(0, 30)]
-	int m_instantateItemCount = 9;
+	int instantateItemCount = 9;
 
 	public Direction direction;
 
-	public OnItemPositionChange onUpdateItem = new OnItemPositionChange ();
+	public OnItemPositionChange onUpdateItem = new OnItemPositionChange();
 
 	[System.NonSerialized]
-	public List<RectTransform>	m_itemList = new List<RectTransform> ();
+	public LinkedList<RectTransform> itemList = new LinkedList<RectTransform>();
 
-	protected float m_diffPreFramePosition = 0;
+	protected float diffPreFramePosition = 0;
 
-	protected int m_currentItemNo = 0;
+	protected int currentItemNo = 0;
 
 	public enum Direction
 	{
@@ -30,45 +29,38 @@ public class InfiniteScroll : UIBehaviour
 		Horizontal,
 	}
 
-
-
 	// cache component
 
-	private RectTransform m_rectTransform;
-	protected RectTransform _RectTransform {
+	private RectTransform _rectTransform;
+	protected RectTransform rectTransform {
 		get {
-			if (m_rectTransform == null)
-				m_rectTransform = GetComponent<RectTransform> ();
-			return m_rectTransform;
+			if(_rectTransform == null) _rectTransform = GetComponent<RectTransform>();
+			return _rectTransform;
 		}
 	}
 
-	private float AnchoredPosition
+	private float anchoredPosition
 	{
-		get{
-			return  (direction == Direction.Vertical ) ? 
-					-_RectTransform.anchoredPosition.y:
-					_RectTransform.anchoredPosition.x;
+		get {
+			return direction == Direction.Vertical ? -rectTransform.anchoredPosition.y : rectTransform.anchoredPosition.x;
 		}
 	}
 
-	private float m_itemScale = -1;
-	public float ItemScale {
+	private float _itemScale = -1;
+	public float itemScale {
 		get {
-			if (m_ItemBase != null && m_itemScale == -1) {
-					m_itemScale = (direction == Direction.Vertical ) ? 
-					m_ItemBase.sizeDelta.y : 
-					m_ItemBase.sizeDelta.x ;
+			if(itemPrototype != null && _itemScale == -1) {
+				_itemScale = direction == Direction.Vertical ? itemPrototype.sizeDelta.y : itemPrototype.sizeDelta.x;
 			}
-			return m_itemScale;
+			return _itemScale;
 		}
 	}
 
 	protected override void Start ()
 	{
-		var controllers =GetComponents<MonoBehaviour>()
-				.Where(item => item is IInfiniteScrollSetup )
-				.Select(item => item as IInfiniteScrollSetup )
+		var controllers = GetComponents<MonoBehaviour>()
+				.Where(item => item is IInfiniteScrollSetup)
+				.Select(item => item as IInfiniteScrollSetup)
 				.ToList();
 
 		// create items
@@ -76,70 +68,61 @@ public class InfiniteScroll : UIBehaviour
 		var scrollRect = GetComponentInParent<ScrollRect>();
 		scrollRect.horizontal = direction == Direction.Horizontal;
 		scrollRect.vertical = direction == Direction.Vertical;
-		scrollRect.content = _RectTransform;
+		scrollRect.content = rectTransform;
 
-		m_ItemBase.gameObject.SetActive (false);
+		itemPrototype.gameObject.SetActive(false);
 		
-		for (int i=0; i<m_instantateItemCount; i++) {
-			var item = GameObject.Instantiate (m_ItemBase) as RectTransform;
-			item.SetParent (transform, false);
-			item.name = i.ToString ();
-			item.anchoredPosition = 
-					(direction == Direction.Vertical ) ?
-					new Vector2 (0, -ItemScale * (i)) : 
-					new Vector2 (ItemScale * (i), 0) ;
-			m_itemList.Add (item);
+		for(int i = 0; i < instantateItemCount; i++) {
+			var item = GameObject.Instantiate(itemPrototype) as RectTransform;
+			item.SetParent(transform, false);
+			item.name = i.ToString();
+			item.anchoredPosition = direction == Direction.Vertical ? new Vector2(0, -itemScale * i) : new Vector2(itemScale * i, 0);
+			itemList.AddLast(item);
 
-			item.gameObject.SetActive (true);
+			item.gameObject.SetActive(true);
 
-			foreach( var controller in controllers ){
+			foreach(var controller in controllers) {
 				controller.OnUpdateItem(i, item.gameObject);
 			}
 		}
 
-		foreach(  var controller in controllers  ){
+		foreach(var controller in controllers){
 			controller.OnPostSetupItems();
 		}
 	}
 
-	void Update ()
+	void Update()
 	{
+		while(anchoredPosition - diffPreFramePosition  < -itemScale * 2) {
+			diffPreFramePosition -= itemScale;
 
-		while (AnchoredPosition - m_diffPreFramePosition  < -ItemScale * 2 ) {
+			var item = itemList.First.Value;
+			itemList.RemoveFirst();
+			itemList.AddLast(item);
 
-			m_diffPreFramePosition -= ItemScale;
+			var pos = itemScale * instantateItemCount + itemScale * currentItemNo;
+			item.anchoredPosition = (direction == Direction.Vertical) ? new Vector2(0, -pos) : new Vector2(pos, 0);
 
-			var item = m_itemList [0];
-			m_itemList.RemoveAt (0);
-			m_itemList.Add (item);
+			onUpdateItem.Invoke(currentItemNo + instantateItemCount, item.gameObject);
 
-			var pos = ItemScale * m_instantateItemCount + ItemScale * m_currentItemNo;
-			item.anchoredPosition = (direction == Direction.Vertical ) ? new Vector2 (0, -pos) : new Vector2 (pos, 0);
-
-			onUpdateItem.Invoke (m_currentItemNo + m_instantateItemCount, item.gameObject);
-
-			m_currentItemNo ++;
-
+			currentItemNo++;
 		}
 
-		while (AnchoredPosition- m_diffPreFramePosition > 0 ) {
+		while(anchoredPosition - diffPreFramePosition > 0) {
+			diffPreFramePosition += itemScale;
 
-			m_diffPreFramePosition += ItemScale;
+			var item = itemList.Last.Value;
+			itemList.RemoveLast();
+			itemList.AddFirst(item);
 
-			var itemListLastCount = m_instantateItemCount - 1; 
-			var item = m_itemList [itemListLastCount];
-			m_itemList.RemoveAt (itemListLastCount);
-			m_itemList.Insert (0, item);
+			currentItemNo--;
 
-			m_currentItemNo --;
-
-			var pos = ItemScale * m_currentItemNo;
-			item.anchoredPosition = (direction == Direction.Vertical ) ? new Vector2 (0, -pos): new Vector2 (pos, 0);
-			onUpdateItem.Invoke (m_currentItemNo, item.gameObject);
+			var pos = itemScale * currentItemNo;
+			item.anchoredPosition = (direction == Direction.Vertical) ? new Vector2(0, -pos): new Vector2(pos, 0);
+			onUpdateItem.Invoke(currentItemNo, item.gameObject);
 		}
-
 	}
 
 	[System.Serializable]
-	public class OnItemPositionChange : UnityEngine.Events.UnityEvent<int, GameObject>{}
+	public class OnItemPositionChange : UnityEngine.Events.UnityEvent<int, GameObject> {}
 }

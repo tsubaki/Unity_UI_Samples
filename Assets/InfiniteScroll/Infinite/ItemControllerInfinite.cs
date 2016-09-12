@@ -1,20 +1,19 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-[RequireComponent(typeof( InfiniteScroll))]
+[RequireComponent(typeof(InfiniteScroll))]
 public class ItemControllerInfinite : UIBehaviour, IInfiniteScrollSetup
 {
-	public void OnPostSetupItems ()
+	public void OnPostSetupItems()
 	{
-		GetComponent<InfiniteScroll> ().onUpdateItem.AddListener (OnUpdateItem);
-		GetComponentInParent<ScrollRect> ().movementType = ScrollRect.MovementType.Unrestricted;
+		GetComponent<InfiniteScroll>().onUpdateItem.AddListener(OnUpdateItem);
+		GetComponentInParent<ScrollRect>().movementType = ScrollRect.MovementType.Unrestricted;
 	}
 
-	public void OnUpdateItem (int itemCount, GameObject obj)
+	public void OnUpdateItem(int itemCount, GameObject obj)
 	{
-		var item = obj.GetComponentInChildren<Item> ();
-		item.UpdateItem (itemCount);
+		var item = obj.GetComponentInChildren<Item>();
+		item.UpdateItem(itemCount);
 	}
 }
