@@ -1,27 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEditor;
-using UnityEditorInternal;
+using UnityEditor.Animations;
 using System.Collections.Generic;
 
 public class ContainClip : EditorWindow {
 	
-	private UnityEditor.Animations.AnimatorController controller;
-	
+	private AnimatorController controller;
+
 	string clipName;
 	
 	[MenuItem("Assets/CombineAnimationclip")]
 	static void Create()
 	{
 		var window = ContainClip.GetWindow(typeof(ContainClip)) as ContainClip;
-		if( Selection.activeObject is UnityEditor.Animations.AnimatorController )
-			window.controller = Selection.activeObject as UnityEditor.Animations.AnimatorController;
+		if( Selection.activeObject is AnimatorController )
+			window.controller = Selection.activeObject as AnimatorController;
 	}
 	
 	void OnGUI()
 	{
 		EditorGUILayout.LabelField("target clip");
-		controller = EditorGUILayout.ObjectField(controller, typeof(UnityEditor.Animations.AnimatorController), false) as UnityEditor.Animations.AnimatorController;
+		controller = EditorGUILayout.ObjectField(controller, typeof(AnimatorController), false) as AnimatorController;
 		
 		if( controller == null )
 			return;
@@ -50,7 +50,7 @@ public class ContainClip : EditorWindow {
 		}else{
 			if( GUILayout.Button("create"))
 			{
-				AnimationClip animationClip = UnityEditor.Animations.AnimatorController.AllocateAnimatorClip(clipName);
+				AnimationClip animationClip = AnimatorController.AllocateAnimatorClip(clipName);
 				AssetDatabase.AddObjectToAsset(animationClip, controller);
 				AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(controller));
 				AssetDatabase.Refresh();

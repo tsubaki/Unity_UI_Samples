@@ -31,16 +31,15 @@ public class AnimatorParameter : ScriptableObject
 		name = animatorController.name;
 		for (int i=0; i<controller.parameters.Length; i++) {
 			var param = controller.parameters[i];
-			parameterInfos [i].hashName = Animator.StringToHash (param.name);
-//			parameterInfos[i].name = param.name;
+			parameterInfos[i].hashName = param.nameHash;
 			if (param.type == AnimatorControllerParameterType.Bool) {
-				parameterInfos [i].type = AnimatorParameterInfo.ParameterType.BOOL;
+				parameterInfos[i].type = AnimatorParameterInfo.ParameterType.BOOL;
 			} else if (param.type == AnimatorControllerParameterType.Float) {
-				parameterInfos [i].type = AnimatorParameterInfo.ParameterType.FLOAT;
+				parameterInfos[i].type = AnimatorParameterInfo.ParameterType.FLOAT;
 			} else if (param.type == AnimatorControllerParameterType.Int) {
-				parameterInfos [i].type = AnimatorParameterInfo.ParameterType.INT;
+				parameterInfos[i].type = AnimatorParameterInfo.ParameterType.INT;
 			} else if (param.type == AnimatorControllerParameterType.Trigger) {
-				parameterInfos [i].type = AnimatorParameterInfo.ParameterType.TRIGGER;
+				parameterInfos[i].type = AnimatorParameterInfo.ParameterType.TRIGGER;
 			}
 		}
 		

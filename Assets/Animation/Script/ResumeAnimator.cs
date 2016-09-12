@@ -63,8 +63,8 @@ public class ResumeAnimator : MonoBehaviour
 	{
 		
 		for (int currentLayerCount=0; currentLayerCount<anim.layerCount; currentLayerCount++) {
-			layerInfo [currentLayerCount].nameHash = anim.GetCurrentAnimatorStateInfo (currentLayerCount).nameHash;
-			layerInfo [currentLayerCount].time = anim.GetCurrentAnimatorStateInfo (currentLayerCount).normalizedTime;
+			layerInfo [currentLayerCount].nameHash = anim.GetCurrentAnimatorStateInfo(currentLayerCount).fullPathHash;
+			layerInfo [currentLayerCount].time = anim.GetCurrentAnimatorStateInfo(currentLayerCount).normalizedTime;
 		}
 		
 		if (parameter == null)
