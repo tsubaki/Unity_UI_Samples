@@ -12,7 +12,8 @@ public class InfiniteScroll : UIBehaviour
 	[SerializeField, Range(0, 30)]
 	int instantateItemCount = 9;
 
-	public Direction direction;
+	[SerializeField]
+	private Direction direction;
 
 	public OnItemPositionChange onUpdateItem = new OnItemPositionChange();
 
@@ -93,6 +94,10 @@ public class InfiniteScroll : UIBehaviour
 
 	void Update()
 	{
+		if (itemList.First == null) {
+			return;
+		}
+
 		while(anchoredPosition - diffPreFramePosition  < -itemScale * 2) {
 			diffPreFramePosition -= itemScale;
 
